@@ -5,7 +5,7 @@
 #include "pros/motors.hpp"
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-pros::Motor intake(9);
+pros::Motor intake(5, pros::E_MOTOR_GEARSET_06,false,pros::E_MOTOR_ENCODER_COUNTS);
 
 sylib::SpeedControllerInfo motor_speed_controller ( // read here on how to graph this for easy tuning https://sylvie.fyi/sylib/docs/dd/d2c/md_sample_code__demo.html
     //set the gain to 0 to not use it
@@ -22,22 +22,22 @@ sylib::SpeedControllerInfo motor_speed_controller ( // read here on how to graph
     0 // range to target to apply max voltage
 );
 
-auto flywheel = sylib::Motor(19,3600, true, motor_speed_controller);
+auto flywheel = sylib::Motor(9,3600, true, motor_speed_controller);
 
 // Chassis constructor
 Drive chassis(
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
-    {-12, -13, 4}
+    {1, -2, 3}
 
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {18, -17, 20}
+    {6, -7, -8}
 
     // IMU Port
     ,
-    10
+    4
 
     // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
     //    (or tracking wheel diameter)
@@ -75,5 +75,7 @@ Drive chassis(
 
 void fire() {
 
+  flywheel.set_velocity_custom_controller(3600);
+  pros::delay(300);
   intake.move_relative(500, 100); //idk how many ticks to move the intake  
-};
+}
