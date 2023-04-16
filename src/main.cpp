@@ -3,6 +3,7 @@
 #include "autons.hpp"
 #include "globals.h"
 #include "pros/rtos.hpp"
+#include "flywheel.hpp"
 
 /////
 // For instalattion, upgrading, documentations and tutorials, check out website!
@@ -94,15 +95,21 @@ void autonomous() {
 
 void opcontrol() {
 
+  pros::Task flywheel ( [] { flywheelPID(2900); } );
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
-  flywheel.set_velocity_custom_controller(2700); 
+  // flywheel.set_velocity_custom_controller(2700);
+  //   // Store the time at the start of the loop
+  // std::uint32_t clock = sylib::millis();
 
 
 
   while (true) {
-
-    // Print values in CSV format to the terminal
-    // Requires a tethered connnection to the brain
+    // // Print values in CSV format to the terminal
+    // // Requires a tethered connnection to the brain
+    // printf("%d,%f,%f,%f,%d\n", sylib::millis(), flywheel.get_velocity(), flywheel.get_velocity_error(), flywheel.get_acceleration(), flywheel.get_efficiency());
+ 
+    // // 10ms delay to allow other tasks to run
+    // sylib::delay_until(&clock, 10);
 
     chassis.arcade_standard(ez::SPLIT);
 

@@ -3,37 +3,38 @@
 #include "pros/misc.hpp"
 #include "pros/motors.h"
 #include "pros/motors.hpp"
+#include "flywheel.hpp"
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 pros::Motor intake(5, pros::E_MOTOR_GEARSET_06,false,pros::E_MOTOR_ENCODER_COUNTS);
 
-sylib::SpeedControllerInfo motor_speed_controller ( // read here on how to graph this for easy tuning https://sylvie.fyi/sylib/docs/dd/d2c/md_sample_code__demo.html
-    //set the gain to 0 to not use it
-    [](double rpm){return 5;}, // kV function (feedforward), should return x in this: voltage = x * rpm
-    1, // kP
-    1, // kI
-    1, // kD
-    1, // kH (tbh gain)
-    false, // anti-windup enabled
-    0, // anti-windup range
-    false, // p controller bounds threshold enabled
-    0, // p controller bounds cutoff enabled
-    1, // kP2 for when over threshold
-    0 // range to target to apply max voltage
-);
+// sylib::SpeedControllerInfo motor_speed_controller ( // read here on how to graph this for easy tuning https://sylvie.fyi/sylib/docs/dd/d2c/md_sample_code__demo.html
+//     //set the gain to 0 to not use it
+//     [](double rpm){return 5;}, // kV function (feedforward), should return x in this: voltage = x * rpm
+//     1, // kP
+//     1, // kI
+//     1, // kD
+//     1, // kH (tbh gain)
+//     false, // anti-windup enabled
+//     0, // anti-windup range
+//     false, // p controller bounds threshold enabled
+//     0, // p controller bounds cutoff enabled
+//     1, // kP2 for when over threshold
+//     0 // range to target to apply max voltage
+// );
 
-auto flywheel = sylib::Motor(9,3600, true, motor_speed_controller);
+//auto flywheel = sylib::Motor(9,3600, true, motor_speed_controller);
 
 // Chassis constructor
 Drive chassis(
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
-    {1, -2, 3}
+    {-1, 2, -3}
 
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {6, -7, -8}
+    {-6, 7, 8}
 
     // IMU Port
     ,
@@ -75,7 +76,7 @@ Drive chassis(
 
 void fire() {
 
-  flywheel.set_velocity_custom_controller(3600);
+  set_flywheel_speed(3600);
   pros::delay(300);
-  intake.move_relative(500, 100); //idk how many ticks to move the intake  
+  intake.move_relative(500,600);
 }
